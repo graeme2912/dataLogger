@@ -69,8 +69,9 @@ File DataFile;
 #define LIS3DH_CS 9
 
 // software SPI
-Adafruit_LIS3DH lis = Adafruit_LIS3DH(LIS3DH_CS, LIS3DH_MOSI, LIS3DH_MISO, LIS3DH_CLK);
+//Adafruit_LIS3DH lis = Adafruit_LIS3DH(LIS3DH_CS, LIS3DH_MOSI, LIS3DH_MISO, LIS3DH_CLK);
 // hardware SPI
+Adafruit_LIS3DH lis = Adafruit_LIS3DH(LIS3DH_CS);
 
 #if defined(ARDUINO_ARCH_SAMD)
 // for Zero, output on USB Serial console, remove line below if using programming port to program the Zero!
