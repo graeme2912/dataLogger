@@ -93,7 +93,7 @@ void setup()
   /* Use the RTCWrite library function to set the time and date. 
      Parameters are: I2C address, year, month, date, hour, minute, second, 
      day of week. You would normally only need to do this once */
-  //HCRTC.RTCWrite(I2CDS1307Add, 18, 10, 01, 15, 8, 0, 1);
+  //HCRTC.RTCWrite(I2CDS1307Add, 18, 10, 04, 15, 45, 0, 4);
 
    Serial.println("LIS3DH test!");
   
@@ -179,5 +179,5 @@ void loop()
   }
 
   /* Wait a second before reading again */
-  delay(200);
+  delay(500);
 }
