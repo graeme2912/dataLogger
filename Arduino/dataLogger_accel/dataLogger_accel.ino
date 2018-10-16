@@ -78,6 +78,18 @@ Adafruit_LIS3DH lis = Adafruit_LIS3DH(LIS3DH_CS);
    #define Serial SerialUSB
 #endif
 
+//thermocouple
+
+
+#include "max6675.h"
+
+int ktcSO = 8;
+int ktcCS = 9;
+int ktcCLK = 10;
+
+MAX6675 sensor1(ktcCLK, ktcCS, ktcSO);
+MAX6675 sensor2(ktcCLK, 7, ktcSO);
+
 void setup()
 {
   #ifndef ESP8266
@@ -152,10 +164,16 @@ void loop()
   float x=event.acceleration.x;
   float y=event.acceleration.y;
   float z=event.acceleration.z;
+
+  //sensor values
+  double sensor1_value = sensor1.readCelsius();
+  double sensor2_value = sensor2.readCelsius();
   
   Serial.print(" X: "); Serial.print(x);
   Serial.print(" Y: "); Serial.print(y); 
   Serial.print(" Z: "); Serial.print(z); 
+  Serial.print(" sensor1: "); Serial.print(sensor1_value);
+  Serial.print(" sensor2: "); Serial.print(sensor2_value);
   Serial.println(" m/s^2 ");
     
   /* Open the data.csv file to save our data to. 
@@ -174,7 +192,9 @@ void loop()
     DataFile.print(",");
     DataFile.print(z);
     DataFile.print(",");
-    DataFile.println("TEST!");  
+    DataFile.print(sensor1_value);
+    DataFile.print(",");
+    DataFile.println(sensor2_value);  
     DataFile.close();
   }
 
