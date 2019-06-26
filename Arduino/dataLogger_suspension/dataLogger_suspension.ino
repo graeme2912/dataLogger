@@ -64,11 +64,11 @@ CONSEQUENTIAL DAMAGES FOR ANY REASON WHATSOEVER. */
 #define NUMBER_OF_SENSORS 2
 
 
-unsigned int LOX_ADDRESSES[] = { 0x30, 0x31 };
+unsigned int LOX_ADDRESSES[] = { 0x30, 0x31, 0x32, 0x33 };
 //LOX_ADDRESSES = { 0x30, 0x31 };
 //LOX_ADDRESSES[0] = 0x30;
 
-unsigned int SHT_LOX[] = { 7, 6 };
+unsigned int SHT_LOX[] = { 7, 6, 5, 4};
 // set the pins to shutdown
 
 
@@ -114,8 +114,16 @@ void reset_all(bool do_reset) {
 	delay(10);
 }
 
-void enable_sensor(bool enable, int num){
-	
+void enable_sensor(int num){
+	digitalWrite(SHT_LOX[num], HIGH);
+	delay(10);
+
+	//initing LOX
+	if (!lox[num].begin(LOX_ADDRESSES[num])) {
+		Serial.print(F("Failed to boot VL53L0X number"));
+		Serial.println(num);
+		while (1);
+	}
 }
 
 void setID() {
@@ -123,47 +131,21 @@ void setID() {
 	reset_all(true);
 	reset_all(false);
 
-	// all reset
-	//digitalWrite(SHT_LOX1, LOW);
-	//digitalWrite(SHT_LOX2, LOW);
-	//delay(10);
-
-	// all unreset
-	//digitalWrite(SHT_LOX1, HIGH);
-	//digitalWrite(SHT_LOX2, HIGH);
-	//delay(10);
-
-	// activating LOX1 and reseting LOX2
-	digitalWrite(SHT_LOX1, HIGH);
-	digitalWrite(SHT_LOX2, LOW);
-
 	
 
-	// for (int i = 0; i < NUMBER_OF_SENSORS; i++) {
-	// 	digitalWrite(SHT_LOX[1], HIGH);
-	// 	if (!lox[i].begin(LOX_ADDRESSES[i])) {
-	// 		Serial.println(F("Failed to boot VL53L0X "));
-	// 		while (1);
-	// 	}
-	// }
+	for (int i = 0; i < NUMBER_OF_SENSORS; i++) {
+		for(int j = i+1; j < NUMBER_OF_SENSORS; j++){
+				digitalWrite(SHT_LOX[j], LOW);
+		}
+		enable_sensor(i);
+	 }
 	
-
-	// initing LOX1
-	if (!lox[0].begin(LOX_ADDRESSES[0])) {
-		Serial.println(F("Failed to boot first VL53L0X"));
-		while (1);
-	}
-	delay(10);
-
 	// activating LOX2
-	digitalWrite(SHT_LOX2, HIGH);
-	delay(10);
-
-	//initing LOX2
-	if (!lox[1].begin(LOX_ADDRESSES[1])) {
-		Serial.println(F("Failed to boot second VL53L0X"));
-		while (1);
-	}
+	//enable_sensor(0);
+	//enable_sensor(1);
+	//enable_sensor(2);
+	//enable_sensor(3);
+	
 }
 
 void write_sensor_data() {
@@ -258,7 +240,7 @@ void setup()
 	Serial.println(F("Both in reset mode...(pins are low)"));
 
 	Serial.println(F("Starting..."));
-delay(2000);
+	delay(2000);
 	setID();
 }
 
