@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Arduino",
+    "\\Arduino\\acceldemo",
+    "\\Arduino\\BasicExample",
+    "\\Arduino\\dataLogger_accel",
+    "\\Arduino\\dataLogger_Dario",
+    "\\Arduino\\dataLogger_lab",
+    "\\Arduino\\libraries",
+    "\\Arduino\\libraries\\HCRTC",
+    "\\Arduino\\libraries\\HCRTC\\HCRTC_Example"
+  ],
+  "SelectedNode": "\\Arduino\\libraries\\Adafruit_GPS",
+  "PreviewInSolutionExplorer": false
+}
