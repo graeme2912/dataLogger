@@ -55,38 +55,30 @@ CONSEQUENTIAL DAMAGES FOR ANY REASON WHATSOEVER. */
 #include "Adafruit_VL53L0X.h"
 
 // address we will assign if dual sensor is present
-#define LOX1_ADDRESS 0x30
-#define LOX2_ADDRESS 0x31
 
-#define SHT_LOX1 7
-#define SHT_LOX2 6
-
-#define NUMBER_OF_SENSORS 2
+#define NUMBER_OF_SENSORS 4
 
 
 unsigned int LOX_ADDRESSES[] = { 0x30, 0x31, 0x32, 0x33 };
 //LOX_ADDRESSES = { 0x30, 0x31 };
 //LOX_ADDRESSES[0] = 0x30;
 
-unsigned int SHT_LOX[] = { 7, 6, 5, 4};
+unsigned int SHT_LOX[] = { 7, 6, 5, 3};
 // set the pins to shutdown
 
+//enable extended serial output for debugging
+bool verbose = true;
 
 
-
-Adafruit_VL53L0X lox[NUMBER_OF_SENSORS - 1];
 
 // objects for the vl53l0x
+Adafruit_VL53L0X lox[NUMBER_OF_SENSORS - 1];
+
+//for some reason this has to stay in for it to work, not sure why
 Adafruit_VL53L0X lox1 = Adafruit_VL53L0X();
-Adafruit_VL53L0X lox2 = Adafruit_VL53L0X();
-//Adafruit_VL53L0X lox3 = Adafruit_VL53L0X();
-//Adafruit_VL53L0X lox4 = Adafruit_VL53L0X();
 
 // this holds the measurement
 VL53L0X_RangingMeasurementData_t measure[NUMBER_OF_SENSORS - 1];
-
-//VL53L0X_RangingMeasurementData_t measure1;
-//VL53L0X_RangingMeasurementData_t measure2;
 
 /* Create an instance of HCRTC library */
 HCRTC HCRTC;
@@ -107,8 +99,16 @@ void reset_all(bool do_reset) {
 	for (int i = 0; i < NUMBER_OF_SENSORS; i++) {
 		if (do_reset) {
 			digitalWrite(SHT_LOX[i], LOW);
+			if(verbose){
+				Serial.print("Set sensor low: ");
+				Serial.println(i);
+			}			
 		} else {
 			digitalWrite(SHT_LOX[i], HIGH);
+			if(verbose){
+				Serial.print("Set sensor high: ");
+				Serial.println(i);
+			}	
 		}
 	}
 	delay(10);
@@ -116,13 +116,18 @@ void reset_all(bool do_reset) {
 
 void enable_sensor(int num){
 	digitalWrite(SHT_LOX[num], HIGH);
+	if(verbose){
+		Serial.print("Set sensor high: ");
+		Serial.println(num);
+	}	
 	delay(10);
 
 	//initing LOX
-	if (!lox[num].begin(LOX_ADDRESSES[num])) {
+	while (!lox[num].begin(LOX_ADDRESSES[num])) {
 		Serial.print(F("Failed to boot VL53L0X number"));
 		Serial.println(num);
-		while (1);
+		delay(100);
+		//while (1);
 	}
 }
 
@@ -136,16 +141,13 @@ void setID() {
 	for (int i = 0; i < NUMBER_OF_SENSORS; i++) {
 		for(int j = i+1; j < NUMBER_OF_SENSORS; j++){
 				digitalWrite(SHT_LOX[j], LOW);
+				if(verbose){
+					Serial.print("Set sensor low: ");
+					Serial.println(j);
+				}	
 		}
 		enable_sensor(i);
-	 }
-	
-	// activating LOX2
-	//enable_sensor(0);
-	//enable_sensor(1);
-	//enable_sensor(2);
-	//enable_sensor(3);
-	
+	 }	
 }
 
 void write_sensor_data() {
@@ -180,6 +182,7 @@ void write_sensor_data() {
 				Serial.print(measure[i].RangeMilliMeter);
 			} else {
 				DataFile.print(F("error: range"));
+				Serial.print(F("error: range"));
 			}
 			DataFile.print(",");
 			Serial.print(",");
@@ -229,28 +232,29 @@ void setup()
 		Serial.println(F("SD Card OK"));
 	}
 
-	pinMode(SHT_LOX1, OUTPUT);
-	pinMode(SHT_LOX2, OUTPUT);
+	//initialize the shutdown pins as outputs
+	for(int i = 0; i < NUMBER_OF_SENSORS; i++){
+		pinMode(SHT_LOX[i], OUTPUT);
+	}
 
-	Serial.println(F("Shutdown pins inited..."));
+	if(verbose) Serial.println(F("Shutdown pins inited..."));
 
-	digitalWrite(SHT_LOX1, LOW);
-	digitalWrite(SHT_LOX2, LOW);
+	//write low to pins, enabling reset mode, might not actually be needed here as is done later
+	for(int j = 0; j < NUMBER_OF_SENSORS; j++){
+		digitalWrite(SHT_LOX[j], LOW);
+	}
 
-	Serial.println(F("Both in reset mode...(pins are low)"));
+	if(verbose) Serial.println(F("Both in reset mode...(pins are low)"));
 
 	Serial.println(F("Starting..."));
-	delay(2000);
+	delay(1000);
 	setID();
 }
-
-
 
 /* Main Loop */
 void loop()
 {
 	write_sensor_data();
-
 	/* Wait half second before reading again */
 	delay(500);
 }
