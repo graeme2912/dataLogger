@@ -53,15 +53,16 @@ CONSEQUENTIAL DAMAGES FOR ANY REASON WHATSOEVER. */
 
 
 #include "Adafruit_VL53L0X.h"
+#include <Adafruit_LIS3DH.h>
+#include <Adafruit_Sensor.h>
 
 // address we will assign if dual sensor is present
 
-#define NUMBER_OF_SENSORS 4
+#define NUMBER_OF_SENSORS 2
 
+#define LIS3DH_CS 9 //pin for accelerometer
 
 unsigned int LOX_ADDRESSES[] = { 0x30, 0x31, 0x32, 0x33 };
-//LOX_ADDRESSES = { 0x30, 0x31 };
-//LOX_ADDRESSES[0] = 0x30;
 
 unsigned int SHT_LOX[] = { 7, 6, 5, 3};
 // set the pins to shutdown
@@ -85,6 +86,9 @@ HCRTC HCRTC;
 
 /* Create an instance of the standard SD card library */
 File DataFile;
+
+//accelerometer object
+Adafruit_LIS3DH lis = Adafruit_LIS3DH();
 
 /*
 	Reset all sensors by setting all of their XSHUT pins low for delay(10), then set all XSHUT high to bring out of reset
@@ -171,10 +175,10 @@ void write_sensor_data() {
 
 	if (DataFile)
 	{
-		DataFile.print(HCRTC.GetDateString());
-		DataFile.print(F(","));
+		DataFile.print(HCRTC.GetDay()); DataFile.print("-"); DataFile.print(HCRTC.GetMonth());
+		DataFile.print(",");
 		DataFile.print(HCRTC.GetTimeString());
-		DataFile.print(F(","));
+		DataFile.print(",");
 
 		for(int i = 0; i < NUMBER_OF_SENSORS; i++){
 			if (measure[i].RangeStatus != 4) {     // if not out of range
@@ -187,6 +191,35 @@ void write_sensor_data() {
 			DataFile.print(",");
 			Serial.print(",");
 		}
+
+		 lis.read();      // get X Y and Z data at once
+		  // Then print out the raw data
+		  /*
+		  Serial.print("X:  "); Serial.print(lis.x); 
+		  Serial.print("  \tY:  "); Serial.print(lis.y); 
+		  Serial.print("  \tZ:  "); Serial.print(lis.z); 
+		  */
+		  /* Or....get a new sensor event, normalized */ 
+		  sensors_event_t event; 
+		  lis.getEvent(&event);
+  
+		  /* Display the results (acceleration is measured in m/s^2) */
+
+		  float x=event.acceleration.x;
+		  float y=event.acceleration.y;
+		  float z=event.acceleration.z;
+
+		  Serial.print(" X: "); Serial.print(x); 
+		  Serial.print(" Y: "); Serial.print(y); 
+		  Serial.print(" Z: "); Serial.print(z); 
+
+
+		//for some reason data from suspension sensors is incorrect when printing accelerometer data to file, fine when printing to serial.
+
+		 //DataFile.print(",");
+		 //DataFile.print(" X: "); DataFile.print(x); DataFile.print(",");
+	     //DataFile.print(" Y: "); DataFile.print(y); DataFile.print(",");
+		// DataFile.print(" Z: "); DataFile.print(z); DataFile.print(",");
 
 		// print sensor one reading to file
 
@@ -232,6 +265,26 @@ void setup()
 		Serial.println(F("SD Card OK"));
 	}
 
+   Serial.println("LIS3DH test!");
+  
+  if (! lis.begin(0x18)) {   // change this to 0x19 for alternative i2c address
+    Serial.println("Couldnt start");
+   // while (1);
+  }
+  Serial.println("LIS3DH found!");
+  
+  lis.setRange(LIS3DH_RANGE_4_G);   // 2, 4, 8 or 16 G!
+  
+  Serial.print("Range = "); Serial.print(2 << lis.getRange());  
+  Serial.println("G");
+
+
+
+	//spacing
+	//DataFile = SD.open("datalog.csv", FILE_WRITE);
+	//DataFile.println("\n\n\n\n\n");
+	//DataFile.close();
+
 	//initialize the shutdown pins as outputs
 	for(int i = 0; i < NUMBER_OF_SENSORS; i++){
 		pinMode(SHT_LOX[i], OUTPUT);
@@ -256,5 +309,5 @@ void loop()
 {
 	write_sensor_data();
 	/* Wait half second before reading again */
-	delay(500);
+	delay(250);
 }

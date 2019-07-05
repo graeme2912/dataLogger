@@ -71,7 +71,7 @@ File DataFile;
 // software SPI
 //Adafruit_LIS3DH lis = Adafruit_LIS3DH(LIS3DH_CS, LIS3DH_MOSI, LIS3DH_MISO, LIS3DH_CLK);
 // hardware SPI
-Adafruit_LIS3DH lis = Adafruit_LIS3DH(LIS3DH_CS);
+Adafruit_LIS3DH lis = Adafruit_LIS3DH();
 
 #if defined(ARDUINO_ARCH_SAMD)
 // for Zero, output on USB Serial console, remove line below if using programming port to program the Zero!
@@ -111,7 +111,7 @@ void setup()
   
   if (! lis.begin(0x18)) {   // change this to 0x19 for alternative i2c address
     Serial.println("Couldnt start");
-    while (1);
+   // while (1);
   }
   Serial.println("LIS3DH found!");
   
