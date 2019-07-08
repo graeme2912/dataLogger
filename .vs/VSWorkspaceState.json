@@ -9,9 +9,8 @@
     "\\Arduino\\dataLogger_lab",
     "\\Arduino\\dataLogger_suspension",
     "\\Arduino\\HCRTCwrite",
-    "\\Arduino\\libraries",
-    "\\Arduino\\libraries\\RTClib"
+    "\\Arduino\\libraries"
   ],
-  "SelectedNode": "\\Arduino\\HCRTCwrite\\HCRTCwrite.ino",
+  "SelectedNode": "\\Arduino\\dataLogger_suspension\\dataLogger_suspension.ino",
   "PreviewInSolutionExplorer": false
 }

@@ -58,7 +58,7 @@ CONSEQUENTIAL DAMAGES FOR ANY REASON WHATSOEVER. */
 
 // address we will assign if dual sensor is present
 
-#define NUMBER_OF_SENSORS 2
+#define NUMBER_OF_SENSORS 4
 
 #define LIS3DH_CS 9 //pin for accelerometer
 
@@ -185,8 +185,8 @@ void write_sensor_data() {
 				DataFile.print(measure[i].RangeMilliMeter);
 				Serial.print(measure[i].RangeMilliMeter);
 			} else {
-				DataFile.print(F("error: range"));
-				Serial.print(F("error: range"));
+				DataFile.print("error: range");
+				Serial.print("error: range");
 			}
 			DataFile.print(",");
 			Serial.print(",");
@@ -309,5 +309,5 @@ void loop()
 {
 	write_sensor_data();
 	/* Wait half second before reading again */
-	delay(250);
+	delay(100);
 }
