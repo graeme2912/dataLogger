@@ -128,10 +128,12 @@ void enable_sensor(int num){
 
 	//initing LOX
 	while (!lox[num].begin(LOX_ADDRESSES[num])) {
-		Serial.print(F("Failed to boot VL53L0X number"));
-		Serial.println(num);
-		delay(100);
-		//while (1);
+		if (verbose) {
+			Serial.print(F("Failed to boot VL53L0X number"));
+			Serial.println(num);
+			delay(100);
+			//while (1);
+		}
 	}
 }
 

@@ -2,14 +2,8 @@
   "ExpandedNodes": [
     "",
     "\\Arduino",
-    "\\Arduino\\acceldemo",
-    "\\Arduino\\BasicExample",
-    "\\Arduino\\dataLogger_accel",
-    "\\Arduino\\dataLogger_Dario",
-    "\\Arduino\\dataLogger_lab",
-    "\\Arduino\\dataLogger_suspension",
-    "\\Arduino\\HCRTCwrite",
-    "\\Arduino\\libraries"
+    "\\Arduino\\6axisAccelDemo",
+    "\\Arduino\\dataLogger_suspension"
   ],
   "SelectedNode": "\\Arduino\\dataLogger_suspension\\dataLogger_suspension.ino",
   "PreviewInSolutionExplorer": false
