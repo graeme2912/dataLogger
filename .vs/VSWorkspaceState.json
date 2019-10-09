@@ -3,8 +3,12 @@
     "",
     "\\Arduino",
     "\\Arduino\\6axisAccelDemo",
-    "\\Arduino\\dataLogger_suspension"
+    "\\Arduino\\dataLogger_brakeTemp",
+    "\\Arduino\\dataLogger_suspension",
+    "\\Arduino\\HCRTCwrite",
+    "\\Arduino\\libraries",
+    "\\Arduino\\MLX90614_Serial_Demo"
   ],
-  "SelectedNode": "\\Arduino",
+  "SelectedNode": "\\Arduino\\MLX90614_Serial_Demo\\MLX90614_Serial_Demo.ino",
   "PreviewInSolutionExplorer": false
 }

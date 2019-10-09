@@ -68,6 +68,7 @@ unsigned int LOX_ADDRESSES[] = { 0x5A, 0x5B, 0x5C, 0x5D };
 
 //enable extended serial output for debugging
 bool verbose = false;
+bool date_enable = true;
 
 
 
@@ -85,10 +86,13 @@ File DataFile;
 void enable_sensors() {
 	if(verbose) Serial.print("enabling sensors");
 	for (int i = 0; i < NUMBER_OF_SENSORS; i++) {
-		therm[i].begin(); //enable sensors
+		therm[i].begin(LOX_ADDRESSES[i]); //enable sensors
 		therm[i].setUnit(TEMP_C); //set unit to degrees celcius
 		Serial.print("Sensor enabled: ");
 		Serial.print(i);
+		Serial.print("   ");
+		Serial.print(LOX_ADDRESSES[i]);
+		Serial.println(" ");
 	}
 
 }
@@ -108,14 +112,18 @@ void write_sensor_data() {
 
 	/* Open the data.csv file to save our data to.
 	   If the file already exists it will just tag our new data onto the end of it */
-	DataFile = SD.open("datalog_brakeTemp.csv", FILE_WRITE);
+	DataFile = SD.open("DATALOG.CSV", FILE_WRITE);
 
 	if (DataFile)
 	{
-		DataFile.print(HCRTC.GetDay()); DataFile.print("-"); DataFile.print(HCRTC.GetMonth());
-		DataFile.print(",");
-		DataFile.print(HCRTC.GetTimeString());
-		DataFile.print(",");
+		if(date_enable){
+			DataFile.print(HCRTC.GetDay()); DataFile.print("-"); DataFile.print(HCRTC.GetMonth());
+			DataFile.print(",");
+			DataFile.print(HCRTC.GetTimeString());
+			DataFile.print(",");
+
+		}
+
 
 		for (int i = 0; i < NUMBER_OF_SENSORS; i++) {
 
@@ -130,17 +138,16 @@ void write_sensor_data() {
 				// They'll be floats, calculated out to the unit you set with setUnit().
 				if (verbose) {
 					Serial.print("Object: " + (therm[i].object(), 2));
-					Serial.write('°'); // Degree Symbol
-					Serial.println("F");
+					Serial.println("C");
 					Serial.print("Ambient: " + (therm[i].ambient(), 2));
-					Serial.write('°'); // Degree Symbol
-					Serial.println("F");
+					Serial.println("C");
 					Serial.println();
 				}
 			} else {
 				Serial.print("Failed.");
 			}
 			DataFile.print(",");
+			Serial.print(therm[i].object());
 			Serial.print(",");
 		}
 
@@ -194,10 +201,37 @@ void setup()
 	delay(1000);
 }
 
+void test_sensors(){
+	for (int i = 0; i < NUMBER_OF_SENSORS; i++) {
+
+
+				if (therm[i].read()) { // On success, read() will return 1, on fail 0.
+
+					// Use the object() and ambient() functions to grab the object and ambient
+					// temperatures.
+					// They'll be floats, calculated out to the unit you set with setUnit().
+					if (verbose) {
+						Serial.print("Object: " + (therm[i].object(), 2));
+						Serial.println("C");
+						Serial.print("Ambient: " + (therm[i].ambient(), 2));
+						Serial.println("C");
+						Serial.println();
+					}
+				} else {
+					Serial.print("Failed.");
+				}
+				Serial.print(",");
+			}
+
+			Serial.println(" ");
+
+}
+
 /* Main Loop */
 void loop()
 {
-	write_sensor_data();
+	//write_sensor_data();
+test_sensors();
 	/* Wait half second before reading again */
 	delay(100);
 }
