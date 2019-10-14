@@ -106,6 +106,7 @@ void write_sensor_data() {
 	DataFile.close();
 }
 
+
 void setup()
 {
 	int SD_CS_DIO = 10;
