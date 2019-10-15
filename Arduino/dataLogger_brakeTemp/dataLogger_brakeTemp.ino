@@ -40,7 +40,7 @@ unsigned int LOX_ADDRESSES[] = { 0x5A, 0x5B, 0x5C, 0x5D, 0x5E };
 #define I2CDS1307Add 0x68
 
 //enable extended serial output for debugging
-bool verbose = true;
+bool verbose = false;
 bool date_enable = true;
 
 //infrared thermometer libraries
@@ -60,7 +60,11 @@ void enable_sensors() {
 		therm[i].begin(LOX_ADDRESSES[i]); //enable sensors
 		therm[i].setUnit(TEMP_C); //set unit to degrees celcius
 		//if (!therm[i].setEmissivity(emis)) while(1); //set emissivity co-efficient to emis
-		therm[i].setEmissivity(emis);
+		
+		//they don't like it when their emissivity is changed and then they are expected to run
+		//change emissivity, then comment out this line, and re-run the program.
+		//therm[i].setEmissivity(emis);
+
 		if(verbose){
 			Serial.print("Sensor enabled: ");
 			Serial.print(i);
@@ -105,14 +109,10 @@ void write_sensor_data() {
 		Serial.print(",");
 	}
 
-	delay(150);
-
 	DataFile = SD.open("DATALOG.CSV", FILE_WRITE);
 	if (verbose) {
 		if(DataFile) Serial.print("opened file");
 	}
-
-	delay(100);
 
 	if (DataFile) {
 		DataFile.print(HCRTC.GetDateString());
@@ -121,11 +121,10 @@ void write_sensor_data() {
 		DataFile.print(",");
 	}
 
-	delay(100);
+	delay(25);
 
-		for (int i = 0; i < NUMBER_OF_SENSORS; i++) {
+		for (int i = 0; i < (NUMBER_OF_SENSORS - 1); i++) {
 			if (therm[i].read()) {
-				delay(100);
 				if (verbose) {
 					Serial.println(i);
 					Serial.print("  Object: ");
@@ -134,24 +133,20 @@ void write_sensor_data() {
 					Serial.print(therm[i].ambient());
 					Serial.println();
 				}
-				delay(250);
+
 				if(DataFile){	
 					DataFile.print(therm[i].object());
 				} else {
 					if(verbose) Serial.print("failed to write to file");
 				}
-				delay(250);
 			} else {
 				if (verbose) Serial.println("failed to read sensor data");
-				DataFile.print("ERR: NO READING");
+				if (verbose) DataFile.print("ERR: NO READING");
 			}
 			DataFile.print(",");
 		}
 
-		delay(250);
-
 	DataFile.println();
-	delay(50);
 	DataFile.close();
 }
 
