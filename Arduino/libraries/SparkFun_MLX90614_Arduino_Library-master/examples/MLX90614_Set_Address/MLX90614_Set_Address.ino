@@ -32,8 +32,8 @@ SparkFun IR Thermometer Evaluation Board - MLX90614
 
 IRTherm therm; // Create an IRTherm object to interact with throughout
 
-const byte oldAddress = 0x5A;
-const byte newAddress = 0x5D;
+const byte oldAddress = 0x5D;
+const byte newAddress = 0x5E;
 
 void setup() 
 {

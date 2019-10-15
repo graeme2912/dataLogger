@@ -33,9 +33,9 @@ SparkFun IR Thermometer Evaluation Board - MLX90614
 #include <Adafruit_SD.h>
 
 
-#define NUMBER_OF_SENSORS 4
+#define NUMBER_OF_SENSORS 5
 
-unsigned int LOX_ADDRESSES[] = { 0x5A, 0x5B, 0x5C, 0x5D };
+unsigned int LOX_ADDRESSES[] = { 0x5A, 0x5B, 0x5C, 0x5D, 0x5E };
 
 #define I2CDS1307Add 0x68
 
@@ -53,14 +53,14 @@ HCRTC HCRTC;
 File DataFile;
 
 void enable_sensors() {
-	float emis = 0.8;
+	float emis = 0.7;
 
 	if (verbose) Serial.println("enabling sensors");
 	for (int i = 0; i < NUMBER_OF_SENSORS; i++) {
 		therm[i].begin(LOX_ADDRESSES[i]); //enable sensors
 		therm[i].setUnit(TEMP_C); //set unit to degrees celcius
 		//if (!therm[i].setEmissivity(emis)) while(1); //set emissivity co-efficient to emis
-
+		therm[i].setEmissivity(emis);
 		if(verbose){
 			Serial.print("Sensor enabled: ");
 			Serial.print(i);
@@ -76,56 +76,6 @@ void enable_sensors() {
 	}
 }
 
-void write_sensor_data() {
-	/*
-	HCRTC.RTCRead(I2CDS1307Add);
-
-	if (verbose) {
-		Serial.print(HCRTC.GetDateString());
-		Serial.print(",");
-		Serial.print(HCRTC.GetTimeString());
-		Serial.print(",");
-	}
-
-	*/
-
-	//delay(10);
-	//Serial.print("almost opened file");
-	//DataFile = SD.open("DATALOG.CSV", FILE_WRITE);
-	//Serial.print("opened file");
-
-
-		for (int i = 0; i < NUMBER_OF_SENSORS; i++) {
-			if (therm[i].read()) {
-				delay(100);
-				if (verbose) {
-					Serial.println(i);
-					Serial.print("  Object: ");
-					Serial.print(therm[i].object());
-					Serial.print("   Ambient: ");
-					Serial.print(therm[i].ambient());
-					Serial.println();
-				}
-
-				//if(true){	
-				//	DataFile.print(therm[i].object());
-				//} else {
-				//	if(verbose) Serial.print("failed to write to file");
-				//}
-				//DataFile.print(therm[i].object());
-				//delay(50);
-			} else {
-				if (verbose) Serial.println("failed to read sensor data");
-				//DataFile.print("ERR: NO READING");
-			}
-			//DataFile.print(",");
-		}
-
-
-	//DataFile.println();
-	//DataFile.close();
-}
-
 void setup_SD_card() {
 	int SD_CS_DIO = 10;
 	int SD_MOSI = 11;
@@ -139,52 +89,85 @@ void setup_SD_card() {
 		/* If there was an error output this to the serial port and go no further */
 		Serial.println(F("ERROR: SD card failed to initialise"));
 		while (1);
-	} else {
+	}
+	else {
 		Serial.println(F("SD Card OK"));
 	}
 }
+
+void write_sensor_data() {
+	HCRTC.RTCRead(I2CDS1307Add);
+
+	if (verbose) {
+		Serial.print(HCRTC.GetDateString());
+		Serial.print(",");
+		Serial.print(HCRTC.GetTimeString());
+		Serial.print(",");
+	}
+
+	delay(150);
+
+	DataFile = SD.open("DATALOG.CSV", FILE_WRITE);
+	if (verbose) {
+		if(DataFile) Serial.print("opened file");
+	}
+
+	delay(100);
+
+	if (DataFile) {
+		DataFile.print(HCRTC.GetDateString());
+		DataFile.print(",");
+		DataFile.print(HCRTC.GetTimeString());
+		DataFile.print(",");
+	}
+
+	delay(100);
+
+		for (int i = 0; i < NUMBER_OF_SENSORS; i++) {
+			if (therm[i].read()) {
+				delay(100);
+				if (verbose) {
+					Serial.println(i);
+					Serial.print("  Object: ");
+					Serial.print(therm[i].object());
+					Serial.print("   Ambient: ");
+					Serial.print(therm[i].ambient());
+					Serial.println();
+				}
+				delay(250);
+				if(DataFile){	
+					DataFile.print(therm[i].object());
+				} else {
+					if(verbose) Serial.print("failed to write to file");
+				}
+				delay(250);
+			} else {
+				if (verbose) Serial.println("failed to read sensor data");
+				DataFile.print("ERR: NO READING");
+			}
+			DataFile.print(",");
+		}
+
+		delay(250);
+
+	DataFile.println();
+	delay(50);
+	DataFile.close();
+}
+
+
 
 void setup()
 {
 	Serial.begin(9600); // Initialize Serial to log output
 	Serial.print("starting");
-	
-	//setup_SD_card();
 	enable_sensors();
-}
+	setup_SD_card();
 
-//void loop_function() {
-//	if (verbose) {
-//		for (int j = 0; j < 20; j++) {
-//			Serial.println(" ");
-//		}
-//	}
-//
-//	for (int i = 0; i < NUMBER_OF_SENSORS; i++) {
-//		write_sensor_data();
-//		if (therm[i].read()) {
-//			if (verbose) {
-//				Serial.println(i);
-//				Serial.print("  Object: ");
-//				Serial.print(therm[i].object());
-//				Serial.print("   Ambient: ");
-//				Serial.print(therm[i].ambient());
-//				Serial.println();
-//			}
-//		}
-//		else {
-//			Serial.println("failed");
-//		}
-//	}
-//}
+}
 
 void loop()
 {
-
 	write_sensor_data();
-
-
-	//setLED(LOW);
-	delay(500);
 }
 
