@@ -1,5 +1,8 @@
 #include<Wire.h>
 #include<Adafruit_SD.h>
+#include<MPU6050.h>
+
+MPU6050 accel;
 
 void setup_SD_card() {
 	int SD_CS_DIO = 10;
@@ -8,6 +11,7 @@ void setup_SD_card() {
 	int SD_SCK = 13;
 
 	pinMode(SD_CS_DIO, OUTPUT);
+	
 
 	/* Initialise the SD card */
 	if (!SD.begin(SD_CS_DIO, SD_MOSI, SD_MISO, SD_SCK))

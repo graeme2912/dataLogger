@@ -6,7 +6,7 @@ void setup() {
 }
 
 void loop() {
-	test.fireSolenoid(200); //delay in ms
+	fireSolenoid(150); //delay in ms
 	Serial.println("The solenoid has fired: ");
 	Serial.print(counter);
 	Serial.print(" time(s).");
@@ -16,6 +16,6 @@ void loop() {
 void fireSolenoid(int ms) {
 	digitalWrite(solenoidPin, HIGH);
 	delay(ms);
-	digitalWrite(solenoidPin, LOW);
+	//digitalWrite(solenoidPin, LOW);
 	delay(ms);
 }

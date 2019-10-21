@@ -22,10 +22,9 @@ unsigned int THERM_ADDRESSES[] = { 0x5A, 0x5B, 0x5C, 0x5D, 0x5E }; //addresses o
 unsigned int LOX_ADDRESSES[] = { 0x30, 0x31, 0x32, 0x33 }; //suspension sensors addressses
 unsigned int SHT_LOX[] = { 7, 6, 5, 3 }; //shutdown pins
 
-bool verbose = true; //enable extended serial output for debugging
+bool verbose = false; //enable extended serial output for debugging
 
 IRTherm therm[NUMBER_OF_THERM_SENSORS - 1]; //Create multiple IRTherm objects to interact with throughout
-
 											// objects for the vl53l0x
 Adafruit_VL53L0X lox[NUMBER_OF_SUSP_SENSORS - 1];
 
@@ -41,6 +40,9 @@ File DataFile; //SD Card library
 
 void enable_sensors() {
 	float emis = 0.7; //emissivity of material 
+
+	setup_suspension_sensors();
+
 
 	if (verbose) Serial.println("enabling sensors");
 	for (int i = 0; i < NUMBER_OF_THERM_SENSORS; i++) {
@@ -65,7 +67,6 @@ void enable_sensors() {
 	delay(200);
 	}
 
-	setup_suspension_sensors();
 }
 
 void setup_SD_card() {
@@ -112,7 +113,7 @@ void enable_sensor(int num) {
 		Serial.print("Set sensor high: ");
 		Serial.println(num);
 	}
-	delay(10);
+	delay(100);
 
 	//initing LOX
 	while (!lox[num].begin(LOX_ADDRESSES[num])) {
@@ -137,7 +138,9 @@ void setID() {
 				Serial.println(j);
 			}
 		}
+
 		enable_sensor(i);
+
 	}
 }
 

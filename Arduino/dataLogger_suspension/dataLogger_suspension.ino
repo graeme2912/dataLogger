@@ -68,7 +68,7 @@ unsigned int SHT_LOX[] = { 7, 6, 5, 3};
 // set the pins to shutdown
 
 //enable extended serial output for debugging
-bool verbose = true;
+bool verbose = false;
 
 
 
@@ -173,7 +173,7 @@ void write_sensor_data() {
 
 	/* Open the data.csv file to save our data to.
 	   If the file already exists it will just tag our new data onto the end of it */
-	DataFile = SD.open("datalog.csv", FILE_WRITE);
+	DataFile = SD.open("SUSP.CSV", FILE_WRITE);
 
 	if (DataFile)
 	{

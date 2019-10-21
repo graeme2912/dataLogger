@@ -80,7 +80,7 @@ void write_sensor_data() {
 		Serial.print(",");
 	}
 
-	DataFile = SD.open("DATALOG.CSV", FILE_WRITE);
+	DataFile = SD.open("BRAKE.CSV", FILE_WRITE);
 	if (verbose) {
 		if(DataFile) Serial.print("opened file");
 	}
