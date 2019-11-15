@@ -2,7 +2,7 @@
   "ExpandedNodes": [
     "",
     "\\Arduino",
-    "\\Arduino\\6axisAccelDemo",
+    "\\Arduino\\dataLogger_6axis",
     "\\Arduino\\dataLogger_brakeTemp",
     "\\Arduino\\dataLogger_brakeTempAndSuspension",
     "\\Arduino\\dataLogger_suspension",
@@ -11,6 +11,6 @@
     "\\Arduino\\MLX90614_Serial_Demo",
     "\\Arduino\\roryTestProgram"
   ],
-  "SelectedNode": "\\Arduino\\6axisAccelDemo\\6axisAccelDemo.ino",
+  "SelectedNode": "\\Arduino\\dataLogger_brakeTemp\\dataLogger_brakeTemp.ino",
   "PreviewInSolutionExplorer": false
 }

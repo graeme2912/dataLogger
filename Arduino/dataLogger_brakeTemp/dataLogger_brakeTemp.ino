@@ -16,6 +16,8 @@ MLX90614 ------------- Arduino
 #define I2CDS1307Add 0x68 //real time clock fixed address
 
 unsigned int LOX_ADDRESSES[] = { 0x5A, 0x5B, 0x5C, 0x5D, 0x5E }; //addresses of each sensor
+//unsigned int LOX_ADDRESSES[] = { 0x5B, 0x5A, 0x5C, 0x5D, 0x5E }; //addresses of each sensor (testing)
+
 
 bool verbose = false; //enable extended serial output for debugging
 
@@ -30,12 +32,18 @@ void enable_sensors() {
 
 	if (verbose) Serial.println("enabling sensors");
 	for (int i = 0; i < NUMBER_OF_SENSORS; i++) {
+	//for (int i = NUMBER_OF_SENSORS-1; i>-1; i--) { //testing
+
+		delay(600);
+
 		therm[i].begin(LOX_ADDRESSES[i]); //enable sensors
-		therm[i].setUnit(TEMP_C); //set unit to degrees celcius
 		//if (!therm[i].setEmissivity(emis)) while(1); //set emissivity co-efficient to emis
-		
+
 		//they don't like it when their emissivity is changed and then they are expected to run
 		//change emissivity, then comment out this line, and re-run the program.
+		//same thing with setting unit for the first one only, not entirely sure why
+
+		//therm[i].setUnit(TEMP_C); //set unit to degrees celcius
 		//therm[i].setEmissivity(emis);
 
 		if(verbose){
@@ -95,19 +103,30 @@ void write_sensor_data() {
 	delay(25); //program restars if this delay does not exist, 25 was as short as i could get it 
 
 	// (i < (NUMBER_OF_SENSORS - 1))   because we have to run one more sensor than required to ensure the code works correctly, but dont bother trying to read because it will fail
+	int count;
 	for (int i = 0; i < (NUMBER_OF_SENSORS - 1); i++) {
+		//if(i==0) delay(75); //extra delay for first one after printing time and date (unnecessary)
 		if (therm[i].read()) {
 			if (verbose) {
 				Serial.println(i);
 				Serial.print("  Object: ");
 				Serial.print(therm[i].object());
-				Serial.print("   Ambient: ");
-				Serial.print(therm[i].ambient());
+				//Serial.print("   Ambient: ");
+				//Serial.print(therm[i].ambient());
+				//Serial.print(therm[i].object());
+
 				Serial.println();
 			}
 
 			if(DataFile){	
-				DataFile.print(therm[i].object());
+				//if(therm[i].object() < 375) DataFile.print(therm[i].object()); else DataFile.print(" ");
+				count = 0;
+				while((therm[i].object() > 375) && (count < 4)) { 
+					delay(25);
+					if (count == 3) DataFile.print(-1);
+					count++;
+				}
+				if(count < 3) DataFile.print(therm[i].object());
 			} else {
 				if(verbose) Serial.print("failed to write to file");
 			}
