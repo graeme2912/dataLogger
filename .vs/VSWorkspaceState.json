@@ -2,15 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\Arduino",
-    "\\Arduino\\dataLogger_6axis",
     "\\Arduino\\dataLogger_brakeTemp",
     "\\Arduino\\dataLogger_brakeTempAndSuspension",
     "\\Arduino\\dataLogger_suspension",
     "\\Arduino\\HCRTCwrite",
     "\\Arduino\\libraries",
+    "\\Arduino\\libraries\\SparkFun_MLX90614_Arduino_Library-master",
     "\\Arduino\\MLX90614_Serial_Demo",
     "\\Arduino\\roryTestProgram"
   ],
-  "SelectedNode": "\\Arduino\\dataLogger_brakeTemp\\dataLogger_brakeTemp.ino",
+  "SelectedNode": "\\Arduino\\roryTestProgram\\roryTestProgram.ino",
   "PreviewInSolutionExplorer": false
 }

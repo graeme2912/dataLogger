@@ -10,8 +10,8 @@ void setup() {
 }
 
 void loop() {
-	fireSolenoid(150, secondSolenoidPin); //delay in ms
-	//fireBothSolenoids(150, 150, firstSolenoidPin, secondSolenoidPin); //delays both in ms
+	//fireSolenoid(150, secondSolenoidPin); //delay in ms
+	fireBothSolenoids(150, 150, firstSolenoidPin, secondSolenoidPin); //delays both in ms
 	Serial.print("The solenoids have fired: ");
 	Serial.print(counter);
 	Serial.println(" time(s).");

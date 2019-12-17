@@ -247,7 +247,7 @@ void setup()
 	int SD_SCK = 13;
 
 	/* Initialise the serial port */
-	Serial.begin(9600);
+	if(verbose) Serial.begin(9600);
 
 	/* Set the SD card CS pin to an output */
 	pinMode(SD_CS_DIO, OUTPUT);
